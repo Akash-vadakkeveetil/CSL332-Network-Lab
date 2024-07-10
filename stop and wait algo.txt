@@ -1,0 +1,65 @@
+Server Algorithm
+Initialization:
+
+1.Create a UDP socket (sockfd).
+2.Initialize server address structure (serverAddr) with port PORT.
+3.Bind the socket to the server address.
+
+Receive Frames:
+4. Continuously listen for incoming frames (recv_frame) from the client using recvfrom().
+5. Capture client's address (clientAddr) for responses.
+
+Frame Validation:
+6. Check if the received frame is a data frame (frame_kind == 1).
+7. Verify if the sequence number (sq_no) matches the expected sequence number (expected_sq_no).
+
+Handling Valid Frames:
+8. If valid:
+
+Print the received data (recv_frame.data).
+Prepare an acknowledgment (send_frame):
+frame_kind set to 0 (ACK).
+ack set to the next expected sequence number (recv_frame.sq_no + 1).
+Send the acknowledgment back to the client using sendto().
+Update expected_sq_no to the next sequence number ((expected_sq_no + 1) % 2).
+
+Invalid Frames Handling:
+9. If the frame is invalid (e.g., wrong sequence number), print an error message.
+
+Close Socket:
+10. Close the socket (sockfd) after terminating the main loop.
+
+
+
+ClientClient Algorithm
+Initialization:
+
+Create a UDP socket (sockfd).
+Initialize server address structure (serverAddr) with IP 127.0.0.1 and port PORT.
+Main Loop:
+3. Enter a continuous loop to send data frames (send_frame) to the server and receive acknowledgments (recv_frame).
+
+Sending Frames:
+4. Prompt the user to enter data.
+5. Construct a data frame (send_frame):
+
+frame_kind set to 1 (data frame).
+sq_no incremented for each new frame.
+data filled with user-input data.
+Send Frame:
+6. Use sendto() to send the data frame to the server (serverAddr).
+
+Receiving Acknowledgment:
+7. Use recvfrom() to receive an acknowledgment (recv_frame) from the server.
+8. Check if the acknowledgment:
+
+frame_kind is 0 (ACK).
+ack matches the expected acknowledgment number (frame_id + 1).
+Handling Valid Acknowledgments:
+9. If valid, print ACK received and increment frame_id for the next frame.
+
+Invalid Acknowledgments Handling:
+10. If invalid (e.g., wrong ACK number), print Invalid ACK received.
+
+Close Socket:
+11. Close the socket (sockfd) after terminating the main loop.
